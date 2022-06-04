@@ -1,5 +1,6 @@
 from crypt import methods
 import os
+from datetime import datetime
 from flask import Flask, request
 from models import db, Expense, ExpenseCategory
 from sqlalchemy.exc import IntegrityError
@@ -43,5 +44,38 @@ def add_expense():
     return {"status": "success"}
 
 
+def get_category_expenses():
+    if request.data:
+        cat_name = request.json.get('cat')
+        if cat_name:
+            cat = db.session.query(ExpenseCategory).filter(ExpenseCategory.name==cat_name).first()
+            expenses = db.session.query(Expense).filter(Expense.category_id==cat.id).all()
+        else:
+            return {"status": "error", "reason": "category_is_not_provided"}
+    else:
+        expenses = db.session.query(Expense).all()
+
+    expenses = [expense.to_dict() for expense in expenses]
+    return {"status": "success", "expenses": expenses}
+
+
+def get_range_expenses():
+    try:
+        start_time = datetime.strptime(request.json.get('stime'), '%Y-%m-%d %H:%M:%S')
+    except:
+        return {"status": "error", "reason": "wrong_start_time"}
+
+    try:
+        end_time = datetime.strptime(request.json.get('etime'), '%Y-%m-%d %H:%M:%S')
+    except:
+        end_time = datetime.now()
+
+    expenses = db.session.query(Expense).filter(Expense.timestamp.between(start_time, end_time)).all()
+    expenses = [expense.to_dict() for expense in expenses]
+    return {"status": "success", "expenses": expenses}
+
+
 app.add_url_rule("/add-category", view_func=add_category, methods=['POST'])
 app.add_url_rule("/add-expense", view_func=add_expense, methods=['POST'])
+app.add_url_rule("/get-expenses", view_func=get_category_expenses, methods=['GET'])
+app.add_url_rule("/get-range-expenses", view_func=get_range_expenses, methods=['GET'])
