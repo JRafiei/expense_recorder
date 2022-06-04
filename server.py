@@ -1,7 +1,7 @@
 from crypt import methods
 import os
 from datetime import datetime
-from flask import Flask, request
+from flask import Flask, request, render_template
 from models import db, Expense, ExpenseCategory
 from sqlalchemy.exc import IntegrityError
 
@@ -13,6 +13,11 @@ db.init_app(app)
 
 # with app.app_context():
 #     db.create_all()
+
+
+def home():
+    categories = db.session.query(ExpenseCategory).all()
+    return render_template('home.html', categories=categories)
 
 
 def add_category():
@@ -75,6 +80,7 @@ def get_range_expenses():
     return {"status": "success", "expenses": expenses}
 
 
+app.add_url_rule("/", view_func=home, methods=['GET'])
 app.add_url_rule("/add-category", view_func=add_category, methods=['POST'])
 app.add_url_rule("/add-expense", view_func=add_expense, methods=['POST'])
 app.add_url_rule("/get-expenses", view_func=get_category_expenses, methods=['GET'])
