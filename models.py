@@ -23,3 +23,13 @@ class Expense(db.Model):
 
     def __repr__(self):
         return f'<Expense {self.title}>'
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'value': self.value,
+            'note': self.note,
+            'timestamp': str(self.timestamp),
+            'category': self.category.name
+        }
