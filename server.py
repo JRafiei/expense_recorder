@@ -1,3 +1,4 @@
+import calendar
 from crypt import methods
 import os
 from datetime import datetime
@@ -60,15 +61,15 @@ def add_expense():
 
 
 def get_category_expenses():
-    if request.data:
-        cat_name = request.json.get('cat')
-        if cat_name:
-            cat = db.session.query(ExpenseCategory).filter(ExpenseCategory.name==cat_name).first()
-            expenses = db.session.query(Expense).filter(Expense.category_id==cat.id).all()
+    cat_name = request.args.get('cat')
+    if cat_name:
+        cat = db.session.query(ExpenseCategory).filter(ExpenseCategory.name==cat_name).first()
+        if cat is None:
+            return {"status": "error", "reason": "category_does_not_exists"}
         else:
-            return {"status": "error", "reason": "category_is_not_provided"}
+            expenses = db.session.query(Expense).filter(Expense.category_id==cat.id)
     else:
-        expenses = db.session.query(Expense).all()
+        expenses = db.session.query(Expense)
 
     expenses = [expense.to_dict() for expense in expenses]
     return {"status": "success", "expenses": expenses}
@@ -85,9 +86,41 @@ def get_range_expenses():
     except:
         end_time = datetime.now()
 
-    expenses = db.session.query(Expense).filter(Expense.timestamp.between(start_time, end_time)).all()
+    expenses = db.session.query(Expense).filter(Expense.timestamp.between(start_time, end_time))
     expenses = [expense.to_dict() for expense in expenses]
     return {"status": "success", "expenses": expenses}
+
+
+def get_monthly_expenses():
+    year = int(request.args.get('year'))
+    month = request.args.get('month')
+    month_number = datetime.strptime(month, "%B").month
+    last_month_day = calendar.monthrange(year, month_number)[1]
+    start_time = datetime(year=year, month=month_number, day=1, hour=0, minute=0, second=0)
+    end_time = datetime(year=year, month=month_number, day=last_month_day, hour=0, minute=0, second=0)
+    expenses = db.session.query(Expense).filter(Expense.timestamp.between(start_time, end_time))
+    expenses = expenses.order_by(Expense.timestamp.desc())
+    day_expenses = {}
+    category_expenses = {}
+    for expense in expenses:
+        key = expense.timestamp.strftime('%Y-%m-%d')
+        if key not in day_expenses:
+            day_expenses[key] = {'expenses': [], 'total': 0}
+        day_expenses[key]['expenses'].append(expense)
+        day_expenses[key]['total'] += expense.value
+
+        key2 = expense.category.name
+        if key2 not in category_expenses:
+            category_expenses[key2] = 0
+        category_expenses[key2] += expense.value
+        
+    data = {
+        "day_expenses": day_expenses,
+        "category_expenses": category_expenses,
+        "month_name": month,
+        "year": year
+    }
+    return render_template('monthly_expenses.html', **data)
 
 
 app.add_url_rule("/", view_func=home, methods=['GET'])
@@ -95,3 +128,4 @@ app.add_url_rule("/add-category", view_func=add_category, methods=['POST'])
 app.add_url_rule("/add-expense", view_func=add_expense, methods=['POST'])
 app.add_url_rule("/get-expenses", view_func=get_category_expenses, methods=['GET'])
 app.add_url_rule("/get-range-expenses", view_func=get_range_expenses, methods=['GET'])
+app.add_url_rule("/monthly-expenses", view_func=get_monthly_expenses, methods=['GET'])
