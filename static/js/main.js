@@ -2,6 +2,7 @@ const addExpenseMsg = document.querySelector('#add-expense-msg');
 const addExpenseBtn = document.querySelector('#add-expense button');
 const titleInput = document.querySelector('#add-expense #title');
 const valueInput = document.querySelector('#add-expense #value');
+const timestampInput = document.querySelector('#add-expense #timestamp');
 const categoryInput = document.querySelector('#add-expense #category');
 const monthPicker = document.querySelector('.month-picker');
 const yearSelect = monthPicker.querySelector('#year');
@@ -22,11 +23,12 @@ const PostData = async(url, data) => {
     const responseData = await response.json();
     return responseData;
 }
-const addExpense = async (title, value, category) => {
+const addExpense = async (title, value, category, timestamp) => {
     const responseData = await PostData('/add-expense', {
             'title': title,
             'value': value,
-            'cat': category
+            'cat': category,
+            'timestamp': timestamp
     });
     if (responseData.status == "success") {
         // addExpenseMsg.innerHTML = `
@@ -46,7 +48,8 @@ addExpenseBtn.addEventListener('click', e => {
     const title = titleInput.value;
     const value = valueInput.value;
     const category = categoryInput.value;
-    addExpense(title, value, category);
+    const timestamp = timestampInput.value;
+    addExpense(title, value, category, timestamp);
 })
 
 monthPicker.addEventListener('click', e => {

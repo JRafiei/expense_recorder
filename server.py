@@ -48,11 +48,17 @@ def add_expense():
         title = request.json.get('title')
         value = request.json.get('value')
         cat_name = request.json.get('cat')
+        timestamp = request.json.get('timestamp')
+        if timestamp:
+            timestamp = datetime.strptime(request.json['timestamp'], '%Y-%m-%dT%H:%M')
+        else:
+            timestamp = datetime.now()
+
         cat = db.session.query(ExpenseCategory).filter(ExpenseCategory.name==cat_name).first()
         if cat is None:
             return {"status": "error", "reason": "category_does_not_exists"}
 
-        expense = Expense(title=title, value=value, category=cat)
+        expense = Expense(title=title, value=value, category=cat, timestamp=timestamp)
         cat.expenses.append(expense)
         db.session.commit()
     except Exception as e:

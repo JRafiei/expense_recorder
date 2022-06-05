@@ -16,7 +16,7 @@ class Expense(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(80), nullable=False)
     value = db.Column(db.Float, nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime.now )
+    timestamp = db.Column(db.DateTime)
     note = db.Column(db.String(200), nullable=True)
     category_id = db.Column(db.Integer, db.ForeignKey(ExpenseCategory.id), nullable=False)
     category = db.relationship('ExpenseCategory', backref=db.backref('expenses', lazy=True))
