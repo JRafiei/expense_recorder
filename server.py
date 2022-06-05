@@ -16,8 +16,18 @@ db.init_app(app)
 
 
 def home():
+    now = datetime.now()
+    year = now.year
+    month_name = now.strftime('%B')
     categories = db.session.query(ExpenseCategory).all()
-    return render_template('home.html', categories=categories)
+    last_expenses = db.session.query(Expense).order_by(Expense.id.desc()).limit(5)
+    data = {
+        'categories': categories,
+        'expenses': last_expenses,
+        'year': year,
+        'month_name': month_name
+    }
+    return render_template('home.html', **data)
 
 
 def add_category():

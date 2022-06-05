@@ -13,10 +13,10 @@
   <body>
     <div class="container">
       <div class="row">
-        <div class="col-md-8 mt-2">
-          <h1>Home</h1>
+        <div class="col-md-8 mt-4">
+          <h2>Add Expense</h2>
           <div id="add-expense-msg"></div>
-          <div id="add-expense" class="input-group mb-3">
+          <div id="add-expense" class="input-group mb-5">
             <input type="text" id="title" class="form-control" placeholder="Title" aria-label="Title">
             <input type="text" id="value" class="form-control" placeholder="Value" aria-label="Value">
             <select class="form-select" id="category" placeholder="Value" aria-label="Category">
@@ -27,6 +27,28 @@
             </select>
             <button class="btn btn-primary" type="button">Button</button> 
           </div>
+          <h2>Latest Expenses</h2>
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Title</th>
+                <th scope="col">Value</th>
+                <th scope="col">Category</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for expense in expenses %}
+                <tr>
+                  <th scope="row">{{ expense.id }}</th>
+                  <td>{{ expense.title }}</td>
+                  <td>{{ expense.value }}</td>
+                  <td>{{ expense.category.name }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
