@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+
+{% block title %}Add Expense{% endblock %}
+{% block extra_css %}
+  .month-picker button {
+    width: 110px;
+    margin-bottom: 2px;
+  }
+{% endblock %}
+
+
+{% block content %}
+  <div class="row">
+    <div class="col-md-6 mt-4">
+      <h2>Add Expense</h2>
+      <div id="add-expense-msg"></div>
+      <div id="add-expense" class="mt-3 mb-5">
+        <div class="input-group mb-3">
+          <span class="input-group-text">Title</span>
+          <input type="text" id="title" name="title" class="form-control" aria-label="Title">
+        </div>
+        <div class="input-group mb-3">
+          <span class="input-group-text">Value</span>
+          <input type="text" id="value" name="value" class="form-control" aria-label="Value">
+        </div>
+        <div class="input-group mb-3">
+          <span class="input-group-text">Category</span>
+          <select class="form-select" id="category" name="category" aria-label="Category">
+            <option selected>Choose...</option>
+            {% for category in categories %}
+              <option value="{{category.name}}">{{ category.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="input-group mb-3">
+          <span class="input-group-text">Time</span>
+          <input type="datetime-local" id="timestamp" name="timestamp" class="form-control" aria-label="Timestamp">
+        </div>
+        <div class="d-grid gap-2 mx-auto">
+          <button class="btn btn-success btn-block" type="button">Add</button> 
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-5 offset-md-1 mt-4">
+      <h2>Add Category</h2>
+      <div id="add-category-msg"></div>
+      <div id="add-category" class="mt-3 mb-5">
+        <div class="input-group mb-3">
+          <span class="input-group-text">Category Name</span>
+          <input type="text" id="name" name="name" class="form-control" aria-label="Name">
+        </div>
+        <div class="d-grid gap-2 mx-auto">
+          <button class="btn btn-success btn-block" type="button">Add</button> 
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="/static/js/add_expense.js"></script>
+{% endblock %}
