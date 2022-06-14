@@ -2,7 +2,6 @@ const addExpenseMsg = document.querySelector('#add-expense-msg');
 const addExpenseBtn = document.querySelector('#add-expense button');
 const titleInput = document.querySelector('#add-expense #title');
 const valueInput = document.querySelector('#add-expense #value');
-const timestampInput = document.querySelector('#add-expense #timestamp');
 const categoryInput = document.querySelector('#add-expense #category');
 const monthPicker = document.querySelector('.month-picker');
 const yearSelect = monthPicker.querySelector('#year');
@@ -23,22 +22,13 @@ const PostData = async(url, data) => {
     const responseData = await response.json();
     return responseData;
 }
-const addExpense = async (title, value, category, timestamp) => {
+const addExpense = async (title, value, category) => {
     const responseData = await PostData('/add-expense', {
             'title': title,
             'value': value,
             'cat': category,
-            'timestamp': timestamp
     });
     if (responseData.status == "success") {
-        // addExpenseMsg.innerHTML = `
-        // <div class="alert alert-success alert-dismissible fade show" role="alert">
-        //   <strong>Expense Added Successfully!</strong> You can add another expense right now!
-        //   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        // </div>`;
-        // titleInput.value = "";
-        // valueInput.value = "";
-        // categoryInput.value = categoryInput.querySelector("option:first-child").value;
         window.location.href = "/";
     }
 }
@@ -48,8 +38,7 @@ addExpenseBtn.addEventListener('click', e => {
     const title = titleInput.value;
     const value = valueInput.value;
     const category = categoryInput.value;
-    const timestamp = timestampInput.value;
-    addExpense(title, value, category, timestamp);
+    addExpense(title, value, category);
 })
 
 monthPicker.addEventListener('click', e => {
