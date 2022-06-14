@@ -138,7 +138,7 @@ def get_range_expenses():
 
 
 app.add_url_rule("/", view_func=home, methods=['GET'])
-app.add_url_rule("/expense/add", view_func=add_expense_view, methods=['GET'])
+app.add_url_rule("/add", view_func=add_expense_view, methods=['GET'])
 app.add_url_rule("/monthly-expenses", view_func=get_monthly_expenses, methods=['GET'])
 app.add_url_rule("/add-category", view_func=add_category, methods=['POST'])
 app.add_url_rule("/add-expense", view_func=add_expense, methods=['POST'])
